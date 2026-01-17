@@ -57,7 +57,7 @@
 
     .ulagos-accent { color: var(--ulagos-red); }
 
-    .ulagos-logo svg { height: 64px; width: auto; }
+    .ulagos-logo img { height: 64px; width: auto; }
 
     .section-title {
       background-color: #1e3a8a;
@@ -177,29 +177,21 @@
       <div class="rounded-2xl border border-slate-200 overflow-hidden bg-white shadow-sm">
         <div class="flex flex-col gap-4 p-4 md:p-6 md:flex-row md:items-center md:justify-between">
           <div class="flex flex-col md:flex-row md:items-center gap-4">
-            <div class="ulagos-logo" aria-hidden="true">
-              <svg viewBox="0 0 220 60" role="img" aria-label="Logo Universidad de Los Lagos">
-                <rect x="0" y="8" width="48" height="10" rx="5" fill="var(--ulagos-red)"></rect>
-                <rect x="0" y="25" width="48" height="10" rx="5" fill="var(--ulagos-teal)"></rect>
-                <rect x="0" y="42" width="48" height="10" rx="5" fill="var(--ulagos-gold)"></rect>
-                <text x="60" y="46" font-family="Arial, sans-serif" font-weight="800" font-size="36" fill="var(--ulagos-navy)">ULAGOS</text>
-              </svg>
+            <div class="ulagos-logo">
+              <img src="logo-ulagos.jpeg" alt="Logo Universidad de Los Lagos">
             </div>
             <div>
               <p class="text-xs md:text-sm uppercase tracking-[0.2em] text-slate-500">Universidad de Los Lagos</p>
-              <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 uppercase">
+              <h1 class="text-lg md:text-xl font-semibold text-slate-900 uppercase">
                 Dirección de Docencia
               </h1>
-              <p class="text-sm md:text-base font-semibold text-slate-700 uppercase">
+              <p class="text-lg md:text-xl font-semibold text-slate-900 uppercase">
                 Unidad de Desarrollo Docente y Curricular
               </p>
             </div>
           </div>
           <div class="text-left md:text-right">
             <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 uppercase">Guía de Aprendizaje 2026</h2>
-            <p class="ulagos-accent font-semibold italic mt-1">
-              Flujo sin API: Formulario → Prompt → Gemini (manual) → Resultado final
-            </p>
           </div>
         </div>
         <div class="ulagos-color-bar"></div>
