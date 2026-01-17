@@ -474,7 +474,7 @@
       const container = document.getElementById('competencias-container');
       const label = type === 'generica' ? 'General:' : 'Específica:';
 
-      const existingRows = document.querySelectorAll(\`.row-\${type}\`);
+      const existingRows = document.querySelectorAll(`.row-${type}`);
       if (existingRows.length > 0) {
         const lastRow = existingRows[existingRows.length - 1];
         const btnContainer = lastRow.querySelector('.btn-container');
@@ -482,7 +482,7 @@
       }
 
       const newRow = document.createElement('tr');
-      newRow.className = \`row-\${type}\`;
+      newRow.className = `row-${type}`;
       newRow.innerHTML = `
         <td>
           <strong>${label}</strong>
@@ -534,11 +534,11 @@
 
     function addNotaRowToRA(numRA) {
       const container = document.getElementById('notas-container');
-      const items = document.querySelectorAll(\`.ra-item-\${numRA}\`);
+      const items = document.querySelectorAll(`.ra-item-${numRA}`);
       const isFirst = items.length === 0;
 
       const newRow = document.createElement('tr');
-      newRow.className = \`ra-item-\${numRA}\`;
+      newRow.className = `ra-item-${numRA}`;
       newRow.innerHTML = `
         <td class="text-center font-extrabold bg-slate-50">
           ${isFirst ? `RA${numRA} <div class="no-print"><button title="Agregar otra evaluación a este RA" onclick="addNotaRowToRA(${numRA})" class="text-green-700 font-extrabold">+</button></div>` : ''}
@@ -684,6 +684,14 @@ ${ctx.notas.length ? ctx.notas.map(n => `- ${n.ra}: ${n.tipo || '(tipo?)'} ${n.p
         status.className = 'text-sm mt-3 text-green-700 font-semibold';
       } catch (e) {
         // Fallback: seleccionar texto para copiar manualmente
+        const promptNode = document.getElementById('promptText');
+        if (promptNode && window.getSelection) {
+          const selection = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(promptNode);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
         status.textContent = 'No fue posible copiar automáticamente. Seleccione el texto del prompt y copie manualmente (Ctrl+C).';
         status.className = 'text-sm mt-3 text-amber-700 font-semibold';
       }
