@@ -150,10 +150,7 @@
     <header class="text-center border-b pb-6 mb-6">
       <h1 class="text-3xl font-extrabold text-slate-800 uppercase">Guía de Aprendizaje 2026</h1>
       <p class="text-blue-700 font-semibold italic mt-2">
-        Flujo sin API: Formulario → PDF → Gemini (manual) → Resultado final
-      </p>
-      <p class="text-xs text-slate-500 mt-2 no-print">
-        Recomendación: use Chrome o Edge. Para PDF: “Imprimir” → “Guardar como PDF”.
+        Flujo sin API: Formulario → Prompt → Gemini (manual) → Resultado final
       </p>
     </header>
 
@@ -177,10 +174,9 @@
           <div class="flex items-start gap-3">
             <span class="badge-step">2</span>
             <div>
-              <p class="font-bold">Paso 2: Genere el PDF base (entrada para Gemini).</p>
+              <p class="font-bold">Paso 2: Genere el prompt con los datos del formulario.</p>
               <p class="text-sm text-slate-600">
-                Presione “Descargar PDF (Guía base)”. Se abrirá la impresión del navegador:
-                seleccione “Guardar como PDF”. Ese archivo será el que adjuntará a Gemini.
+                Presione “Generar prompt” para construir el texto que usará en Gemini.
               </p>
             </div>
           </div>
@@ -198,9 +194,9 @@
           <div class="flex items-start gap-3">
             <span class="badge-step">4</span>
             <div>
-              <p class="font-bold">Paso 4: Copie el prompt y adjunte el PDF en Gemini.</p>
+              <p class="font-bold">Paso 4: Copie el prompt y úselo en Gemini.</p>
               <p class="text-sm text-slate-600">
-                Presione “Ver y Copiar Prompt”. En Gemini: pegue el prompt y adjunte el PDF descargado en el paso 2.
+                Presione “Generar prompt”, copie el texto y péguelo en Gemini.
                 Solicite que el resultado quede en tablas claras (Plan 17 semanas + Cronograma).
               </p>
             </div>
@@ -208,18 +204,6 @@
         </div>
 
         <div class="mt-5 flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-center">
-          <button class="btn btn-primary" onclick="handlePrint()">
-            Descargar PDF (Guía base)
-          </button>
-
-          <a class="btn btn-violet text-center" href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer">
-            Abrir Gemini (nueva pestaña)
-          </a>
-
-          <button class="btn btn-slate" onclick="openPromptModal()">
-            Ver y Copiar Prompt
-          </button>
-
           <button class="btn btn-outline" onclick="clearForm()">
             Limpiar formulario
           </button>
@@ -227,7 +211,7 @@
 
         <div class="warning-box mt-5">
           <strong>Nota:</strong> Esta herramienta no utiliza API ni accede a su cuenta de Gemini.
-          El docente controla el proceso: genera el PDF base y luego usa Gemini manualmente con el prompt sugerido.
+          El docente controla el proceso: genera el prompt y luego usa Gemini manualmente.
         </div>
       </div>
     </section>
@@ -349,58 +333,14 @@
         <tbody id="notas-container"></tbody>
       </table>
 
-      <div class="section-title">6. PLANIFICACIÓN DE SESIONES (17 SEMANAS)</div>
-      <p class="text-sm text-slate-600 mb-3 print-hint">
-        Esta sección se completa en Gemini (manual). El PDF base sirve como insumo para que Gemini genere la propuesta.
-      </p>
-      <table class="text-[12px]">
-        <thead>
-          <tr>
-            <th class="w-12">Sem.</th>
-            <th class="w-16">RA</th>
-            <th>Saber conceptual</th>
-            <th>Docencia directa</th>
-            <th>Trabajo autónomo</th>
-            <th class="w-28">Recursos</th>
-          </tr>
-        </thead>
-        <tbody id="semanas-container"></tbody>
-      </table>
-
-      <div class="section-title">6.1. CRONOGRAMA DE EVALUACIONES (PROCESO Y PRODUCTO)</div>
-      <p class="text-sm text-slate-600 mb-3 print-hint">
-        Esta sección se completa en Gemini (manual), considerando el esquema de notas, ponderaciones y progresión de RA.
-      </p>
-      <table class="text-[12px]">
-        <thead>
-          <tr>
-            <th class="w-24">Fecha / Sem.</th>
-            <th class="w-16">RA</th>
-            <th class="w-32">Tipo</th>
-            <th>Medio de Evaluación</th>
-            <th>Instrumento</th>
-            <th class="w-20">Pond.</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Dejar vacío como guía. Gemini generará el contenido fuera. -->
-          <tr>
-            <td class="text-slate-400 italic text-center" colspan="6">
-              (Se completa en Gemini. En el resultado final, pegue aquí o use el documento generado por Gemini.)
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
       <div class="warning-box">
-        <strong>⚠️ Nota importante:</strong> Esta guía base se genera como insumo. La propuesta de planificación/cronograma
+        <strong>⚠️ Nota importante:</strong> La propuesta de planificación/cronograma
         que elabore Gemini debe ser revisada y ajustada por el docente antes de considerarla definitiva.
       </div>
 
       <div class="mt-10 no-print flex flex-col md:flex-row gap-3 justify-center">
-        <button class="btn btn-primary" onclick="handlePrint()">Descargar PDF (Guía base)</button>
+        <button class="btn btn-slate" onclick="openPromptModal()">Generar prompt</button>
         <a class="btn btn-violet text-center" href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer">Abrir Gemini</a>
-        <button class="btn btn-slate" onclick="openPromptModal()">Ver y Copiar Prompt</button>
       </div>
     </div>
   </div>
@@ -412,7 +352,7 @@
         <div>
           <h3 id="promptTitle" class="text-lg font-extrabold text-slate-800">Paso 4: Prompt para Gemini (copiar y pegar)</h3>
           <p class="text-sm text-slate-600">
-            En Gemini: pegue este prompt y adjunte el PDF generado en el Paso 2.
+            En Gemini: pegue este prompt para generar la planificación y el cronograma.
           </p>
         </div>
         <button class="btn btn-outline !py-2 !px-3" onclick="closePromptModal()">Cerrar</button>
@@ -433,15 +373,14 @@
 
         <div id="copyStatus" class="text-sm mt-3 text-slate-600"></div>
 
-        <div class="warning-box mt-5">
-          <strong>Instrucciones:</strong>
-          <ol class="list-decimal ml-5 mt-2">
-            <li>Abra Gemini (Paso 3).</li>
-            <li>Adjunte el PDF “Guía base” que descargó (Paso 2).</li>
-            <li>Pegue este prompt y envíelo.</li>
-            <li>Guarde/Imprima el resultado de Gemini como PDF (si lo necesita).</li>
-          </ol>
-        </div>
+          <div class="warning-box mt-5">
+            <strong>Instrucciones:</strong>
+            <ol class="list-decimal ml-5 mt-2">
+              <li>Abra Gemini (Paso 3).</li>
+              <li>Pegue este prompt y envíelo.</li>
+              <li>Guarde/Imprima el resultado de Gemini como PDF (si lo necesita).</li>
+            </ol>
+          </div>
       </div>
     </div>
   </div>
@@ -450,32 +389,8 @@
     let raCount = 1;
 
     function initApp() {
-      initSemanas();
       addNotaRowToRA(1);
       setDefaultPrompt();
-    }
-
-    function handlePrint() {
-      // Guardar como PDF desde la impresora del navegador
-      window.focus();
-      window.print();
-    }
-
-    function initSemanas() {
-      const container = document.getElementById('semanas-container');
-      container.innerHTML = '';
-      for (let i = 1; i <= 17; i++) {
-        container.innerHTML += `
-          <tr class="sem-row-${i}">
-            <td class="text-center font-extrabold bg-slate-50">${i}</td>
-            <td class="text-center"><textarea class="val-ra-display text-center" readonly placeholder="RAx"></textarea></td>
-            <td><textarea class="sem-con text-[12px] min-h-[44px]" placeholder="(Se completa en Gemini)"></textarea></td>
-            <td><textarea class="sem-dir text-[12px] min-h-[44px]" placeholder="(Se completa en Gemini)"></textarea></td>
-            <td><textarea class="sem-aut text-[12px] min-h-[44px]" placeholder="(Se completa en Gemini)"></textarea></td>
-            <td><textarea class="sem-rec text-[12px] min-h-[44px]" placeholder="(Se completa en Gemini)"></textarea></td>
-          </tr>
-        `;
-      }
     }
 
     function addCompRow(type) {
@@ -621,10 +536,10 @@
 
     function buildPrompt(ctx) {
       const header = `
-Actúa como diseñador instruccional universitario en Chile. Vas a trabajar con un PDF adjunto llamado "Guía base", que contiene: identificación, competencias, Resultados de Aprendizaje (RA), saberes por RA y esquema de notas.
+Actúa como diseñador instruccional universitario en Chile. Vas a trabajar con la información entregada en este prompt, que incluye identificación, competencias, Resultados de Aprendizaje (RA), saberes por RA y esquema de notas.
 
 INSTRUCCIONES IMPORTANTES:
-- Usa el PDF como fuente principal. No inventes información que no esté en el PDF.
+- Usa el contexto entregado en este prompt como fuente principal. No inventes información que no esté en el contexto.
 - Si falta algún dato crítico, plantea una lista corta de supuestos razonables y continúa.
 - Mantén coherencia: progresión por semanas, alineación RA ↔ saberes ↔ evaluaciones.
 - La planificación es para 17 semanas.
@@ -649,15 +564,15 @@ B) TABLA 6.1: Cronograma de evaluaciones (Proceso y Producto) con:
 
 C) Validación rápida al final (máximo 6 líneas):
    - ¿Las evaluaciones cubren todos los RA?
-   - ¿Las ponderaciones suman 100%? Si el PDF no define ponderaciones, propón una distribución razonable y consistente.
+   - ¿Las ponderaciones suman 100%? Si el contexto no define ponderaciones, propón una distribución razonable y consistente.
 
-Ahora, con el PDF adjunto, genera TABLA 6 y TABLA 6.1.`;
+Ahora, con la información entregada, genera TABLA 6 y TABLA 6.1.`;
 
       if (!ctx) return normalizeText(header);
 
-      // Bloque contextual opcional: mejora precisión si Gemini no lee perfecto el PDF.
+      // Bloque contextual opcional: mejora precisión si Gemini no interpreta bien el contexto.
       const ctxBlock = `
-CONTEXTO EXTRAÍDO (para ayudarte a leer el PDF; prioriza el PDF si hay discrepancias):
+CONTEXTO EXTRAÍDO (prioriza este contexto si hay discrepancias):
 - Asignatura: ${ctx.asignatura || '(no especificada)'}
 - Carrera: ${ctx.carrera || '(no especificada)'}
 - Semestre: ${ctx.semestre || '(no especificado)'}
@@ -688,7 +603,7 @@ ${ctx.notas.length ? ctx.notas.map(n => `- ${n.ra}: ${n.tipo || '(tipo?)'} ${n.p
 
       try {
         await navigator.clipboard.writeText(text);
-        status.textContent = 'Listo: prompt copiado al portapapeles. En Gemini, péguelo y adjunte el PDF de la Guía base.';
+        status.textContent = 'Listo: prompt copiado al portapapeles. En Gemini, péguelo y envíelo.';
         status.className = 'text-sm mt-3 text-green-700 font-semibold';
       } catch (e) {
         // Fallback: seleccionar texto para copiar manualmente
@@ -766,15 +681,11 @@ ${ctx.notas.length ? ctx.notas.map(n => `- ${n.ra}: ${n.tipo || '(tipo?)'} ${n.p
       document.getElementById('notas-container').innerHTML = '';
       addNotaRowToRA(1);
 
-      // Reset semanas placeholders
-      initSemanas();
-
       // Reset prompt
       setDefaultPrompt();
     }
 
     Object.assign(window, {
-      handlePrint,
       openPromptModal,
       closePromptModal,
       copyPrompt,
