@@ -757,6 +757,18 @@ ${ctx.notas.length ? ctx.notas.map(n => `- ${n.ra}: ${n.tipo || '(tipo?)'} ${n.p
       setDefaultPrompt();
     }
 
+    Object.assign(window, {
+      handlePrint,
+      openPromptModal,
+      closePromptModal,
+      copyPrompt,
+      fillPromptFromForm,
+      addCompRow,
+      addRARow,
+      addNotaRowToRA,
+      clearForm,
+    });
+
     // Cerrar modal con Escape / click fuera
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closePromptModal();
