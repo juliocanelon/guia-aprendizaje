@@ -97,6 +97,17 @@
     .btn-slate:hover { background: #334155; }
     .btn-green { background: #10b981; color: #fff; }
     .btn-green:hover { background: #059669; }
+    .btn-plus {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      line-height: 1;
+    }
     .btn-outline {
       background: #fff;
       border: 1px solid #cbd5e1;
@@ -516,7 +527,7 @@
       newRow.className = `ra-item-${numRA}`;
       newRow.innerHTML = `
         <td class="text-center font-extrabold bg-slate-50">
-          ${isFirst ? `RA${numRA} <div class="no-print"><button title="Agregar otra evaluación a este RA" onclick="addNotaRowToRA(${numRA})" class="text-green-700 font-extrabold">+</button></div>` : ''}
+          ${isFirst ? `RA${numRA} <div class="no-print"><button title="Agregar otra evaluación a este RA" onclick="addNotaRowToRA(${numRA})" class="btn btn-green btn-plus">+</button></div>` : ''}
         </td>
         <td>
           <select>
