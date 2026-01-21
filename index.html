@@ -516,7 +516,7 @@
       newRow.className = `ra-item-${numRA}`;
       newRow.innerHTML = `
         <td class="text-center font-extrabold bg-slate-50">
-          ${isFirst ? `RA${numRA} <div class="no-print"><button title="Agregar otra evaluación a este RA" onclick="addNotaRowToRA(${numRA})" class="text-green-700 font-extrabold">+</button></div>` : ''}
+          ${isFirst ? `RA${numRA} <div class="no-print"><button title="Agregar otra evaluación a este RA" onclick="addNotaRowToRA(${numRA})" class="text-green-700 font-black text-lg leading-none"><span class="font-black">+</span></button></div>` : ''}
         </td>
         <td>
           <select>
