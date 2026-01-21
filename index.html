@@ -313,7 +313,7 @@
           <tr class="row-generica" data-type="generica">
             <td>
               <strong>Formación integral:</strong>
-              <textarea class="val-comp" placeholder="Competencia de formación integral..."></textarea>
+              <textarea class="val-comp" placeholder="Competencia..."></textarea>
               <div class="no-print mt-2 btn-container">
                 <button class="btn btn-green !py-2 !px-3 !rounded-lg !text-sm" onclick="addCompRow('generica')">+ Agregar más</button>
               </div>
@@ -324,7 +324,7 @@
           <tr class="row-especifica" data-type="especifica">
             <td>
               <strong>Específica:</strong>
-              <textarea class="val-comp" placeholder="Competencia específica..."></textarea>
+              <textarea class="val-comp" placeholder="Competencia..."></textarea>
               <div class="no-print mt-2 btn-container">
                 <button class="btn btn-green !py-2 !px-3 !rounded-lg !text-sm" onclick="addCompRow('especifica')">+ Agregar más</button>
               </div>
@@ -340,7 +340,7 @@
           <tr class="row-ra">
             <td class="text-center font-extrabold w-20">RA1</td>
             <td>
-              <textarea class="val-ra" placeholder="Escriba el resultado del aprendizaje del programa de asignatura..."></textarea>
+              <textarea class="val-ra" placeholder="Escriba el resultado de aprendizaje (RA) del programa de asignatura..."></textarea>
               <div class="no-print mt-2 container-btn-ra">
                 <button class="btn btn-green !py-2 !px-3 !rounded-lg !text-sm" onclick="addRARow()">+ Agregar RA</button>
               </div>
@@ -447,7 +447,7 @@
 
     function addCompRow(type) {
       const container = document.getElementById('competencias-container');
-      const label = type === 'generica' ? 'General:' : 'Específica:';
+      const label = type === 'generica' ? 'Formación integral:' : 'Específica:';
 
       const existingRows = document.querySelectorAll(`.row-${type}`);
       if (existingRows.length > 0) {
@@ -466,7 +466,7 @@
             <button class="btn btn-green !py-2 !px-3 !rounded-lg !text-sm" onclick="addCompRow('${type}')">+ Agregar más</button>
           </div>
         </td>
-        <td><textarea class="val-nivel" placeholder="Ej.: Básico / Intermedio / Avanzado"></textarea></td>
+        <td><textarea class="val-nivel" placeholder="Descripción del nivel de dominio"></textarea></td>
       `;
 
       if (existingRows.length > 0) {
@@ -486,7 +486,7 @@
       newRow.innerHTML = `
         <td class="text-center font-extrabold w-20">RA${raCount}</td>
         <td>
-          <textarea class="val-ra" placeholder="Redacte el Resultado de Aprendizaje (RA) en forma observable y evaluable..."></textarea>
+          <textarea class="val-ra" placeholder="Escriba el resultado de aprendizaje (RA) del programa de asignatura..."></textarea>
           <div class="no-print mt-2 container-btn-ra">
             <button class="btn btn-green !py-2 !px-3 !rounded-lg !text-sm" onclick="addRARow()">+ Agregar RA</button>
           </div>
@@ -754,7 +754,7 @@ ${ctx.notas.length ? ctx.notas.map(n => `- ${n.ra}: ${n.tipo || '(tipo?)'} ${n.p
         <tr class="row-especifica" data-type="especifica">
           <td>
             <strong>Específica:</strong>
-            <textarea class="val-comp" placeholder="Competencia específica..."></textarea>
+            <textarea class="val-comp" placeholder="Competencia..."></textarea>
             <div class="no-print mt-2 btn-container">
               <button class="btn btn-green !py-2 !px-3 !rounded-lg !text-sm" onclick="addCompRow('especifica')">+ Agregar más</button>
             </div>
