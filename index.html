@@ -295,6 +295,10 @@
           <th>Correo</th>
           <td><textarea id="field-correo" placeholder="correo@ulagos.cl"></textarea></td>
         </tr>
+        <tr>
+          <th>Fecha guía</th>
+          <td colspan="3"><input id="field-fecha" type="date"></td>
+        </tr>
       </table>
 
       <div class="section-title">2. APORTES AL PERFIL DE EGRESO</div>
@@ -437,6 +441,7 @@
 
     function initApp() {
       addNotaRowToRA(1);
+      setTodayDate();
       setDefaultPrompt();
     }
 
@@ -555,6 +560,7 @@
       const semestre = normalizeText(document.getElementById('field-semestre').value);
       const seccion = normalizeText(document.getElementById('field-seccion').value);
       const docente = normalizeText(document.getElementById('field-docente').value);
+      const fecha = normalizeText(document.getElementById('field-fecha').value);
 
       const ras = Array.from(document.querySelectorAll('.row-ra')).map((row, idx) => {
         const label = `RA${idx+1}`;
@@ -578,7 +584,7 @@
         return { ra, tipo, pond };
       }).filter(x => x.ra || x.tipo || x.pond);
 
-      return { asignatura, carrera, semestre, seccion, docente, ras, saberes, notas };
+      return { asignatura, carrera, semestre, seccion, docente, fecha, ras, saberes, notas };
     }
 
     function buildPrompt(ctx) {
@@ -613,7 +619,38 @@ C) Validación rápida al final (máximo 6 líneas):
    - ¿Las evaluaciones cubren todos los RA?
    - ¿Las ponderaciones suman 100%? Si el contexto no define ponderaciones, propón una distribución razonable y consistente.
 
-Ahora, con la información entregada, genera TABLA 6 y TABLA 6.1.`;
+Ahora, con la información entregada, genera TABLA 6 y TABLA 6.1.
+
+Para la planificación de las 17 semanas es importante destacar
+Primer semestre: Fecha límite para construir la estructura de notas por resultados de aprendizaje: lunes 6 de abril de 2026.
+Revisión institucional de ingreso de calificaciones: 11 al 15 de mayo de 2026.
+Segundo semestre:
+Fecha límite para la estructura de notas: viernes 4 de septiembre de 2026.
+Revisión de calificaciones y asistencia: 12 al 16 de octubre de 2026.
+El cumplimiento oportuno de estos plazos es obligatorio para todas las asignaturas.
+Cierre de actas y asignaturas:
+Cierre actas 1° semestre: lunes 27 de julio de 2026.
+Cierre actas 2° semestre: viernes 15 de enero de 2027.
+Estos cierres se realizan exclusivamente en el Sistema de Estructura de Notas y son un hito crítico para la finalización del proceso académico.
+
+Semanas sin docencia regular
+Semana Vida Universitaria (primer semestre): 18 al 22 de mayo de 2026.
+Semana Vida Universitaria (segundo semestre): 26 al 30 de octubre de 2026.
+Receso Fiestas Patrias: 14 al 18 de septiembre de 2026.
+Durante estas semanas no se realizan clases regulares ni evaluaciones, por lo que deben considerarse en la planificación docente.
+
+Evaluación docente e inscripción de asignaturas
+Primer semestre:
+Evaluación docente e inscripción de asignaturas: 21 de enero al 5 de marzo de 2026.
+Segundo semestre:
+Evaluación docente e inscripción: 3 al 5 de agosto de 2026.
+
+Este proceso es obligatorio y está directamente vinculado a la gestión académica y beneficios estudiantiles.
+
+Reforzamiento y evaluación especial
+Primer semestre: desde el 20 de julio al 14 de agosto de 2026.
+Segundo semestre: del 4 al 22 de enero de 2027.
+Estas instancias se rigen por el Reglamento de Evaluación vigente y deben ser consideradas en la carga académica docente.`;
 
       if (!ctx) return normalizeText(header);
 
@@ -625,6 +662,7 @@ CONTEXTO EXTRAÍDO (prioriza este contexto si hay discrepancias):
 - Semestre: ${ctx.semestre || '(no especificado)'}
 - Sección: ${ctx.seccion || '(no especificada)'}
 - Docente: ${ctx.docente || '(no especificado)'}
+- Fecha: ${ctx.fecha || '(no especificado)'}
 
 RESULTADOS DE APRENDIZAJE (RA):
 ${ctx.ras.map(r => `- ${r.label}: ${r.value || '(vacío)'}`).join('\n')}
@@ -672,6 +710,7 @@ ${ctx.notas.length ? ctx.notas.map(n => `- ${n.ra}: ${n.tipo || '(tipo?)'} ${n.p
       document.querySelectorAll('textarea').forEach(t => t.value = '');
       document.querySelectorAll('input[type="text"], input[type="number"]').forEach(i => i.value = '');
       document.getElementById('field-semestre').selectedIndex = 0;
+      setTodayDate();
 
       // Reset RA a 1
       raCount = 1;
@@ -730,6 +769,16 @@ ${ctx.notas.length ? ctx.notas.map(n => `- ${n.ra}: ${n.tipo || '(tipo?)'} ${n.p
 
       // Reset prompt
       setDefaultPrompt();
+    }
+
+    function setTodayDate() {
+      const dateField = document.getElementById('field-fecha');
+      if (!dateField) return;
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      dateField.value = `${year}-${month}-${day}`;
     }
 
     Object.assign(window, {
