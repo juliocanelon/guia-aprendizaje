@@ -652,7 +652,7 @@ Primer semestre: desde el 20 de julio al 14 de agosto de 2026.
 Segundo semestre: del 4 al 22 de enero de 2027.
 Estas instancias se rigen por el Reglamento de Evaluación vigente y deben ser consideradas en la carga académica docente.`;
 
-      if (!ctx) return normalizeText(header);
+      if (!ctx) return header.trim();
 
       // Bloque contextual opcional: mejora precisión si Gemini no interpreta bien el contexto.
       const ctxBlock = `
@@ -674,7 +674,7 @@ ESQUEMA DE NOTAS (si aplica):
 ${ctx.notas.length ? ctx.notas.map(n => `- ${n.ra}: ${n.tipo || '(tipo?)'} ${n.pond || '(ponderación?)'}`).join('\n') : '- (no informado)'}
 `;
 
-      return `${normalizeText(header)}\n\n${ctxBlock.trim()}`;
+      return `${header.trim()}\n\n${ctxBlock.trim()}`;
     }
 
     function fillPromptFromForm() {
