@@ -1,29 +1,32 @@
 /*
-  Prompt base para Gemini (parte estática).
-  Este texto se combina con el CONTEXTO EXTRAÍDO del formulario en buildPrompt() (index.html).
-  Editar aquí el prompt sin tocar la lógica de la aplicación.
+  Prompt base para Gemini.
+  - PROMPT_HEADER: instrucciones fijas (independientes del semestre).
+  Las fechas del calendario viven aparte en calendario.js (window.CALENDARIO_ACADEMICO).
+  buildPrompt() (index.html) ensambla: HEADER + CALENDARIO[semestre del año] + CONTEXTO del formulario.
+  Editar aquí el texto del prompt sin tocar la lógica de la aplicación.
 */
-window.PROMPT_HEADER = `
-Actúa como diseñador instruccional universitario en Chile. Vas a trabajar con la información entregada en este prompt, que incluye identificación, competencias, Resultados de Aprendizaje (RA), saberes por RA y esquema de notas.
+window.PROMPT_HEADER = `Actúa como diseñador instruccional universitario en Chile. Vas a trabajar con la información entregada en este prompt, que incluye identificación, competencias, Resultados de Aprendizaje (RA), saberes por RA y esquema de notas.
 
 INSTRUCCIONES IMPORTANTES:
 - Usa el contexto entregado en este prompt como fuente principal. No inventes información que no esté en el contexto.
 - Si falta algún dato crítico, plantea una lista corta de supuestos razonables y continúa.
-- Mantén coherencia: progresión por semanas, alineación RA ↔ saberes ↔ evaluaciones.
-- La planificación es para 17 semanas.
+- La planificación es para 17 semanas. Mantén coherencia: progresión por semanas, alineación RA ↔ saberes ↔ evaluaciones.
+- ORDEN Y ALINEACIÓN DE TABLAS: diseña primero la TABLA 6 completa y deriva la TABLA 6.1 exclusivamente de ella. Toda evaluación de la TABLA 6.1 debe aparecer en la semana correspondiente de la TABLA 6, indicando en "Docencia directa" la aplicación/recepción del instrumento por el docente y en "Trabajo autónomo" la rendición/entrega por el estudiante. Ninguna evaluación puede figurar en la 6.1 sin estar declarada en la 6. Razona este orden internamente y entrega solo las tablas finales, sin explicar el proceso.
+- CALENDARIO ACADÉMICO: usa el bloque "CALENDARIO ACADÉMICO" entregado más abajo, donde cada hito ya viene con su número de semana y fechas calculados. No recalcules las semanas: respétalas tal como se indican. Las semanas de receso (Vida Universitaria, Fiestas Patrias) se agregan como filas ADICIONALES en la TABLA 6, marcadas "Sin docencia regular / sin evaluación", y NO consumen ninguna de las 17 semanas lectivas; no programes evaluaciones en ellas. Los hitos posteriores al término lectivo (cierre de actas, reforzamiento) menciónalos como nota al pie, fuera de las 17 semanas.
 - Entrega el resultado en formato claro y utilizable por un docente.
 
 SALIDAS REQUERIDAS (sin texto extra):
+
 A) TABLA 6: Planificación de 17 semanas (una fila por semana) con columnas:
    - Semana (1..17)
    - RA (RA1, RA2, etc.)
    - Saber conceptual (resumen)
-   - Docencia directa (actividades del docente)
-   - Trabajo autónomo (actividades del estudiante)
+   - Docencia directa (actividades del docente e hitos explícitos de evaluación presencial o virtual)
+   - Trabajo autónomo (actividades del estudiante, incluyendo la rendición o entrega de evaluaciones)
    - Recursos (bibliografía, herramientas, LMS, etc.)
 
 B) TABLA 6.1: Cronograma de evaluaciones (Proceso y Producto) con:
-   - Semana o Fecha/Semana
+   - Semana o Fecha/Semana (debe coincidir exactamente con las semanas de evaluación declaradas en la TABLA 6)
    - RA
    - Tipo (Proceso/Producto)
    - Medio de evaluación (prueba, informe, proyecto, exposición, etc.)
@@ -34,35 +37,10 @@ C) Validación rápida al final (máximo 6 líneas):
    - ¿Las evaluaciones cubren todos los RA?
    - ¿Las ponderaciones suman 100%? Si el contexto no define ponderaciones, propón una distribución razonable y consistente.
 
-Ahora, con la información entregada, genera TABLA 6 y TABLA 6.1.
+Ahora, con la información entregada, genera TABLA 6 y TABLA 6.1.`;
 
-Para la planificación de las 17 semanas es importante destacar
-Primer semestre: Fecha límite para construir la estructura de notas por resultados de aprendizaje: lunes 6 de abril de 2026.
-Revisión institucional de ingreso de calificaciones: 11 al 15 de mayo de 2026.
-Segundo semestre:
-Fecha límite para la estructura de notas: viernes 4 de septiembre de 2026.
-Revisión de calificaciones y asistencia: 12 al 16 de octubre de 2026.
-El cumplimiento oportuno de estos plazos es obligatorio para todas las asignaturas.
-Cierre de actas y asignaturas:
-Cierre actas 1° semestre: lunes 27 de julio de 2026.
-Cierre actas 2° semestre: viernes 15 de enero de 2027.
-Estos cierres se realizan exclusivamente en el Sistema de Estructura de Notas y son un hito crítico para la finalización del proceso académico.
-
-Semanas sin docencia regular
-Semana Vida Universitaria (primer semestre): 18 al 22 de mayo de 2026.
-Semana Vida Universitaria (segundo semestre): 26 al 30 de octubre de 2026.
-Receso Fiestas Patrias: 14 al 18 de septiembre de 2026.
-Durante estas semanas no se realizan clases regulares ni evaluaciones, por lo que deben considerarse en la planificación docente.
-
-Evaluación docente e inscripción de asignaturas
-Primer semestre:
-Evaluación docente e inscripción de asignaturas: 21 de enero al 5 de marzo de 2026.
-Segundo semestre:
-Evaluación docente e inscripción: 3 al 5 de agosto de 2026.
-
-Este proceso es obligatorio y está directamente vinculado a la gestión académica y beneficios estudiantiles.
-
-Reforzamiento y evaluación especial
-Primer semestre: desde el 20 de julio al 14 de agosto de 2026.
-Segundo semestre: del 4 al 22 de enero de 2027.
-Estas instancias se rigen por el Reglamento de Evaluación vigente y deben ser consideradas en la carga académica docente.`;
+/*
+  Las fechas del calendario académico se mantienen aparte, en datos estructurados
+  (ver calendario.js -> window.CALENDARIO_ACADEMICO). buildPrompt() (index.html) calcula
+  el número de semana de cada hito y arma el bloque "CALENDARIO ACADÉMICO" del prompt.
+*/

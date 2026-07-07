@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Guía de Aprendizaje - Flujo sin API (U. de Los Lagos)</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="calendario.js"></script>
   <script src="prompt.js"></script>
 
   <style>
@@ -260,7 +261,7 @@
           <td><textarea id="field-carrera" placeholder="Ej.: Ingeniería en Informática"></textarea></td>
         </tr>
         <tr>
-          <th>Semestre</th>
+          <th>Semestre de la carrera</th>
           <td>
             <select id="field-semestre">
               <option>Primer Semestre</option>
@@ -286,7 +287,14 @@
         </tr>
         <tr>
           <th>Fecha guía</th>
-          <td colspan="3"><input id="field-fecha" type="date"></td>
+          <td><input id="field-fecha" type="date"></td>
+          <th>Semestre del año</th>
+          <td>
+            <select id="field-periodo" title="Determina el calendario académico (recesos, hitos de notas) que se inserta en el prompt. Se autoselecciona según la fecha; cámbielo si planifica el otro semestre.">
+              <option value="s1">Primer semestre (marzo–julio)</option>
+              <option value="s2">Segundo semestre (agosto–diciembre)</option>
+            </select>
+          </td>
         </tr>
       </table>
 
@@ -323,7 +331,7 @@
         </tbody>
       </table>
 
-      <div class="section-title">4. RESULTADOS DE APRENDIZAJE (RA)</div>
+      <div class="section-title">3. RESULTADOS DE APRENDIZAJE (RA)</div>
       <table>
         <tbody id="ra-container">
           <tr class="row-ra">
@@ -338,7 +346,7 @@
         </tbody>
       </table>
 
-      <div class="section-title">5. SABERES DE LA ASIGNATURA (por RA)</div>
+      <div class="section-title">4. SABERES DE LA ASIGNATURA (por RA)</div>
       <table>
         <thead>
           <tr>
@@ -358,7 +366,7 @@
         </tbody>
       </table>
 
-      <div class="section-title">5.1. ESQUEMA DE NOTAS (por RA)</div>
+      <div class="section-title">4.1. ESQUEMA DE NOTAS (por RA)</div>
       <table>
         <thead>
           <tr>
@@ -431,6 +439,7 @@
     function initApp() {
       addNotaRowToRA(1);
       setTodayDate();
+      setDefaultPeriodo();
       setDefaultPrompt();
     }
 
@@ -550,6 +559,7 @@
       const seccion = normalizeText(document.getElementById('field-seccion').value);
       const docente = normalizeText(document.getElementById('field-docente').value);
       const fecha = normalizeText(document.getElementById('field-fecha').value);
+      const periodo = normalizeText(document.getElementById('field-periodo')?.value) || periodoPorDefecto();
 
       const ras = Array.from(document.querySelectorAll('.row-ra')).map((row, idx) => {
         const label = `RA${idx+1}`;
@@ -573,20 +583,112 @@
         return { ra, tipo, pond };
       }).filter(x => x.ra || x.tipo || x.pond);
 
-      return { asignatura, carrera, semestre, seccion, docente, fecha, ras, saberes, notas };
+      return { asignatura, carrera, semestre, seccion, docente, fecha, periodo, ras, saberes, notas };
+    }
+
+    /* ===== Calendario académico: cálculo de semanas y armado del bloque ===== */
+    const MESES_ES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+    // Parsea "YYYY-MM-DD" como fecha local (evita desfase por zona horaria).
+    function parseISODate(iso) {
+      const [y, m, d] = (iso || '').split('-').map(Number);
+      return new Date(y, (m || 1) - 1, d || 1);
+    }
+
+    function fechaCorta(iso) {
+      const d = parseISODate(iso);
+      return `${d.getDate()} ${MESES_ES[d.getMonth()]}`;
+    }
+
+    function diasEntre(isoA, isoB) {
+      const MS = 24 * 60 * 60 * 1000;
+      return Math.round((parseISODate(isoB) - parseISODate(isoA)) / MS);
+    }
+
+    // Semana calendario: 1 = semana del inicio lectivo.
+    function semanaCalendario(inicioLectivo, iso) {
+      return Math.floor(diasEntre(inicioLectivo, iso) / 7) + 1;
+    }
+
+    // Semana lectiva: descuenta las semanas de receso previas (no consumen semana lectiva).
+    function semanaLectiva(sem, iso) {
+      const wCal = semanaCalendario(sem.inicioLectivo, iso);
+      const recesosPrevios = sem.eventos.filter(e =>
+        e.tipo === 'sin_docencia' &&
+        semanaCalendario(sem.inicioLectivo, e.inicio) < wCal
+      ).length;
+      return wCal - recesosPrevios;
+    }
+
+    function rangoFechas(e) {
+      return (e.fin && e.fin !== e.inicio)
+        ? `${fechaCorta(e.inicio)}–${fechaCorta(e.fin)}`
+        : fechaCorta(e.inicio);
+    }
+
+    // Arma el bloque de texto "CALENDARIO ACADÉMICO" para un semestre.
+    function construirBloqueCalendario(sem) {
+      if (!sem) return '';
+      const hitos = [], recesos = [], posteriores = [];
+
+      sem.eventos.forEach(e => {
+        const rango = rangoFechas(e);
+        if (e.posteriorALectivo) {
+          posteriores.push(`- ${e.nombre}: ${rango}.`);
+        } else if (e.tipo === 'sin_docencia') {
+          recesos.push(`- ${e.nombre} (${rango}): SIN clases ni evaluaciones; agrégala como fila adicional entre las semanas lectivas, no consume ninguna de las 17.`);
+        } else {
+          hitos.push(`- Semana ${semanaLectiva(sem, e.inicio)} (${rango}): ${e.nombre}.`);
+        }
+      });
+
+      const totalSemanas = semanaLectiva(sem, sem.finLectivo);
+      const partes = [
+        `CALENDARIO ACADÉMICO — ${sem.etiqueta.toUpperCase()} (semanas ya calculadas; respétalas):`,
+        `- Inicio período lectivo: ${fechaCorta(sem.inicioLectivo)} (Semana 1).`,
+        `- Término período lectivo: ${fechaCorta(sem.finLectivo)} (Semana ${totalSemanas}).`,
+      ];
+      if (hitos.length) { partes.push('Hitos dentro del período lectivo:', ...hitos); }
+      if (recesos.length) { partes.push('Semanas de receso:', ...recesos); }
+      if (posteriores.length) { partes.push('Hitos posteriores al término lectivo (nota al pie, fuera de las 17 semanas):', ...posteriores); }
+      return partes.join('\n');
+    }
+
+    // Semestre académico por defecto según la fecha actual (el docente puede cambiarlo en el formulario).
+    // Ene–jun -> primer semestre; jul–dic -> segundo semestre (desde julio ya se planifica el 2° semestre).
+    function periodoPorDefecto() {
+      return (new Date().getMonth() <= 5) ? 's1' : 's2';
+    }
+
+    function setDefaultPeriodo() {
+      const sel = document.getElementById('field-periodo');
+      if (sel) sel.value = periodoPorDefecto();
+    }
+
+    // Devuelve el bloque de calendario para el semestre del año elegido ('s1' | 's2').
+    function calendarioParaPeriodo(clave) {
+      const cal = window.CALENDARIO_ACADEMICO;
+      if (!cal || !cal.semestres) return '';
+      const sem = cal.semestres[clave] || cal.semestres.s1;
+      return construirBloqueCalendario(sem);
     }
 
     function buildPrompt(ctx) {
       const header = window.PROMPT_HEADER || '';
 
-      if (!ctx) return normalizeText(header);
+      if (!ctx) {
+        const cal = calendarioParaPeriodo(periodoPorDefecto());
+        return `${header}\n\n${cal}`.trim();
+      }
+
+      const calendario = calendarioParaPeriodo(ctx.periodo);
 
       // Bloque contextual opcional: mejora precisión si Gemini no interpreta bien el contexto.
       const ctxBlock = `
 CONTEXTO EXTRAÍDO (prioriza este contexto si hay discrepancias):
 - Asignatura: ${ctx.asignatura || '(no especificada)'}
 - Carrera: ${ctx.carrera || '(no especificada)'}
-- Semestre: ${ctx.semestre || '(no especificado)'}
+- Semestre de la carrera: ${ctx.semestre || '(no especificado)'}
 - Sección: ${ctx.seccion || '(no especificada)'}
 - Docente: ${ctx.docente || '(no especificado)'}
 - Fecha: ${ctx.fecha || '(no especificado)'}
@@ -601,7 +703,7 @@ ESQUEMA DE NOTAS (si aplica):
 ${ctx.notas.length ? ctx.notas.map(n => `- ${n.ra}: ${n.tipo || '(tipo?)'} ${n.pond || '(ponderación?)'}`).join('\n') : '- (no informado)'}
 `;
 
-      return `${normalizeText(header)}\n\n${ctxBlock.trim()}`;
+      return `${header}\n\n${calendario}\n\n${ctxBlock.trim()}`;
     }
 
     function fillPromptFromForm() {
@@ -638,6 +740,7 @@ ${ctx.notas.length ? ctx.notas.map(n => `- ${n.ra}: ${n.tipo || '(tipo?)'} ${n.p
       document.querySelectorAll('input[type="text"], input[type="number"]').forEach(i => i.value = '');
       document.getElementById('field-semestre').selectedIndex = 0;
       setTodayDate();
+      setDefaultPeriodo();
 
       // Reset RA a 1
       raCount = 1;

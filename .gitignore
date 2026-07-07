@@ -1,0 +1,3 @@
+# PDFs del calendario académico (fuente para actualizar calendario.js).
+# Se mantienen solo en local; no se publican en el sitio.
+docs/*.pdf
